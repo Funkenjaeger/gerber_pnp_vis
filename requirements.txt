@@ -1,0 +1,9 @@
+# cairo rendering support
+cairocffi==0.6
+Pillow
+PySide2
+wheel
+pandas
+
+# 11/15/2020: Need to downgrade numpy due to a current issue with Windows 10
+numpy==1.19.3
