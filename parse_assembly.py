@@ -2,8 +2,7 @@ import pandas
 import sys
 import os
 from PySide2.QtUiTools import QUiLoader
-from PySide2.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QGraphicsScene, QFileDialog, \
-    QGraphicsPixmapItem
+from PySide2.QtWidgets import QApplication, QMainWindow, QTreeWidgetItem, QGraphicsScene, QGraphicsRectItem, QFileDialog, QGraphicsPixmapItem
 from PySide2.QtGui import QPixmap, QPen
 from PySide2.QtCore import QFile, Qt
 import gerber_render
@@ -44,6 +43,7 @@ class TestWindow(QMainWindow):
     def __init__(self, parent=None):
         super(TestWindow, self).__init__(parent)
         loader = QUiLoader()
+        # file = QtCore.QFile(os.path.abspath("ui/mainwindow.ui"))
         file = QFile("ui_gerber_pnp_vis.ui")
         if file.open(QFile.ReadOnly):
             self.window = loader.load(file, parent)
@@ -104,8 +104,9 @@ def loadboard():
     global viewtop, pixmap_top, pixmap_bot, BASE_FOLDER, origin_in, ppi
 
     dialog = QFileDialog()
-    BASE_FOLDER = dialog.getExistingDirectory(window, "Select CAMOutputs directory to process...",
-                                              '.', QFileDialog.ShowDirsOnly)
+    # dialog.setFileMode(QFileDialog.Directory)
+    #dialog.setAcceptMode(QFileDialog.AcceptOpen)
+    BASE_FOLDER = dialog.getExistingDirectory(window, "Select CAMOutputs directory to process...", '.', QFileDialog.ShowDirsOnly)
 
     window.statusbar.showMessage('Processing ' + BASE_FOLDER)
     window.statusbar.repaint()
@@ -158,7 +159,6 @@ def setboardside():
         window.actionSideTop.setChecked(False)
         window.actionSideBottom.setChecked(False)
         window.statusbar.showMessage('No board loaded', 3000)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
