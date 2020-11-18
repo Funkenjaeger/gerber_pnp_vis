@@ -20,17 +20,17 @@ This tool is written in Python 3 and depends on the following libraries.
 Note that as of November 2020, there is an outstanding issue with NumPy (1.19.4) in Windows 10.  As a workaround, it is sufficient to downgrade numpy to 1.19.3 (e.g. pip install numpy==1.19.3)
 
 #### Recommended installation process:
-It's recommended (though not mandatory) to create a clean virtual environment to start with.  In Windows command line, this looks like:
-'python -m venv <name_of_your_venv>
-<name_of_your_venv>\Scripts\activate'
+1. It's recommended (though not mandatory) to create a clean virtual environment to start with.  In Windows command line, this looks like:
+* `python -m venv <name_of_your_venv>`
+* `<name_of_your_venv>\Scripts\activate`
 
-From there, install the pcb-tools library from https://github.com/curtacircuitos/pcb-tools.  I recommend following their posted instructions in the github project readme to install - but as of 11/18/2020, the sequence that has worked for me is as follows:
+2. From there, install the pcb-tools library from https://github.com/curtacircuitos/pcb-tools.  I recommend following their posted instructions in the github project readme to install - but as of 11/18/2020, the sequence that has worked for me is as follows:
 Clone the pcb-tools repo, go to the target directory (e.g. pcb-tools or pcb-tools-master) and run:
-'pip install -r requirements.'txt
-pip install -e .'
+* `pip install -r requirements.txt`
+* `pip install -e .`
 
-Finally, go to the directory where you cloned this project (e.g. gerber_pnp_vis or gerber_pnp_vis-master) and run:
-'pip install -r requirements.txt'
+3. Finally, go to the directory where you cloned this project (e.g. gerber_pnp_vis or gerber_pnp_vis-master) and run:
+* `pip install -r requirements.txt`
 
 ### Use
 #### Generating CAM files
