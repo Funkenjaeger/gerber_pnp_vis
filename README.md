@@ -21,16 +21,23 @@ Note that as of November 2020, there is an outstanding issue with NumPy (1.19.4)
 
 #### Recommended installation process:
 1. It's recommended (though not mandatory) to create a clean virtual environment to start with.  In Windows command line, this looks like:
-* `python -m venv <name_of_your_venv>`
-* `<name_of_your_venv>\Scripts\activate`
+ * `python -m venv <name_of_your_venv>`
+ * `<name_of_your_venv>\Scripts\activate`
 
 2. From there, install the pcb-tools library from https://github.com/curtacircuitos/pcb-tools.  I recommend following their posted instructions in the github project readme to install - but as of 11/18/2020, the sequence that has worked for me is as follows:
 Clone the pcb-tools repo, go to the target directory (e.g. pcb-tools or pcb-tools-master) and run:
-* `pip install -r requirements.txt`
-* `pip install -e .`
+  * `pip install -r requirements.txt`
+  * `pip install -e .`
 
-3. Finally, go to the directory where you cloned this project (e.g. gerber_pnp_vis or gerber_pnp_vis-master) and run:
-* `pip install -r requirements.txt`
+3. Next, you need to bring in one minor change to pcb-tools to make it work (until/unless the change ever gets merged to master) - two options:
+ * If you have git installed - from the pcb-tools directory, run:
+   * `git fetch https://github.com/ingobecker/pcb-tools`
+   * `git cherry-pick e032c365696956752a1020b50c398ac101cac1d0`
+ * If you don't have git:
+   * manually edit ./gerber/render/cairo_backend.py to incorporate the following small change: https://github.com/curtacircuitos/pcb-tools/pull/165/commits/e032c365696956752a1020b50c398ac101cac1d0
+
+4. Finally, go to the directory where you cloned this project (e.g. gerber_pnp_vis or gerber_pnp_vis-master) and run:
+  * `pip install -r requirements.txt`
 
 ### Use
 #### Generating CAM files
