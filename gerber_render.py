@@ -11,7 +11,7 @@ import os
 from gerber import load_layer
 from gerber.render import RenderSettings, theme
 from gerber.render.cairo_backend import GerberCairoContext
-# from PIL import Image
+from PIL import Image
 import configparser
 
 

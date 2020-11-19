@@ -1,6 +1,7 @@
 PySide2
 wheel
 pandas
+Pillow
 pycairo
 
 # 11/15/2020: Need to downgrade numpy due to a current issue with Windows 10
