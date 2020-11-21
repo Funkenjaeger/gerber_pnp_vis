@@ -11,7 +11,7 @@ import configparser
 
 
 def populatebomtree():
-    global bom, assy_top, assy_bot, viewtop
+    global bom, assy_top, assy_bot, viewtop, bomcolumns
     bom = pandas.read_csv(os.path.join(BASE_FOLDER, 'Assembly\\bom.csv'), header=0)
     assy_top = pandas.read_csv(os.path.join(BASE_FOLDER, 'Assembly\\PnP_front.csv'), header=0)
     assy_bot = pandas.read_csv(os.path.join(BASE_FOLDER, 'Assembly\\PnP_back.csv'), header=0)
@@ -29,8 +29,7 @@ def populatebomtree():
             pnp_row = assy_side[pnp_refdes == refdes]
             if len(pnp_row) > 0:
                 if pnp_count == 0:
-                    twi = QTreeWidgetItem(tw, [row['Parts'], row['Value'], row['Device'], row['Package'],
-                                               row['Description']])
+                    twi = QTreeWidgetItem(tw, row.filter(bomcolumns).tolist())
                 parts_thisside = parts_thisside + ',' + refdes if pnp_count > 0 else refdes
                 pnp_count = pnp_count + 1
                 twi.addChild(QTreeWidgetItem(twi, [pnp_row['Name'].values[0]]))
@@ -59,7 +58,7 @@ def scaleboardimage():
     try:
         if len(scene.items()) > 0:
             view = window.graphicsView
-            scale = 0.99*min(view.width() / scene.width(), view.height() / scene.height())
+            scale = 0.99 * min(view.width() / scene.width(), view.height() / scene.height())
             window.graphicsView.setScene(scene)
             window.graphicsView.resetTransform()
             window.graphicsView.scale(scale, scale)
@@ -89,10 +88,10 @@ def highlightpart(item):
     refdes = item.data(0, 0)
     pnp_row = assy_side[pnp_refdes == refdes]
     if len(pnp_row) > 0:
-        x = (pnp_row['X']/25.4 - origin_in[0]) * ppi
+        x = (pnp_row['X'] / 25.4 - origin_in[0]) * ppi
         if not viewtop:
             x = scene.width() - x
-        y = scene.height() - (pnp_row['Y']/25.4 - origin_in[1]) * ppi
+        y = scene.height() - (pnp_row['Y'] / 25.4 - origin_in[1]) * ppi
         pen = QPen(Qt.yellow, 5, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin)
         scene.addLine(x - rectsize[0], y - rectsize[1], x + rectsize[0], y + rectsize[1], pen)
         scene.addLine(x - rectsize[0], y + rectsize[1], x + rectsize[0], y - rectsize[1], pen)
@@ -106,6 +105,12 @@ def loadboard():
     dialog = QFileDialog()
     BASE_FOLDER = dialog.getExistingDirectory(window, "Select CAMOutputs directory to process...", '.',
                                               QFileDialog.ShowDirsOnly)
+    if os.path.split(BASE_FOLDER)[1] != 'CAMOutputs':
+        if os.path.exists(os.path.join(BASE_FOLDER, 'CAMOutputs')):
+            BASE_FOLDER = os.path.join(BASE_FOLDER, 'CAMOutputs')
+        else:
+            window.statusbar.showMessage('Error: Invalid directory selected (expected CAMOutputs)', 10000)
+            return
 
     window.statusbar.showMessage('Processing ' + BASE_FOLDER)
     window.statusbar.repaint()
@@ -160,21 +165,28 @@ def setboardside():
         window.statusbar.showMessage('No board loaded', 3000)
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
+# if __name__ == "__main__":
+app = QApplication(sys.argv)
 
-    BASE_FOLDER = '.'
-    viewtop = True
+BASE_FOLDER = '.'
+viewtop = True
 
-    test = TestWindow()
-    window = test.window
-    scene = QGraphicsScene()
-    window.splitter.splitterMoved.connect(scaleboardimage)
-    window.treeWidget_bom.itemSelectionChanged.connect(highlightparts)
-    window.action_processgerbers.triggered.connect(loadboard)
-    window.actionSideTop.triggered.connect(setboardtop)
-    window.actionSideBottom.triggered.connect(setboardbot)
+config = configparser.ConfigParser()
+config.read('config.ini')
+bomcolumns = str.split(config['BOMTREE']['COLUMNS'], ',')
 
-    window.statusbar.showMessage('No board loaded')
+test = TestWindow()
+window = test.window
+window.treeWidget_bom.setColumnCount(len(bomcolumns))
+for ii in range(len(bomcolumns)):
+    window.treeWidget_bom.header().model().setHeaderData(ii, Qt.Horizontal, bomcolumns[ii])
+scene = QGraphicsScene()
+window.splitter.splitterMoved.connect(scaleboardimage)
+window.treeWidget_bom.itemSelectionChanged.connect(highlightparts)
+window.action_processgerbers.triggered.connect(loadboard)
+window.actionSideTop.triggered.connect(setboardtop)
+window.actionSideBottom.triggered.connect(setboardbot)
 
-    sys.exit(app.exec_())
+window.statusbar.showMessage('No board loaded')
+
+sys.exit(app.exec_())

@@ -63,27 +63,7 @@
        </property>
        <column>
         <property name="text">
-         <string>Refdes</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Value</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Device</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Package</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Description</string>
+         <string>Parts</string>
         </property>
        </column>
       </widget>
