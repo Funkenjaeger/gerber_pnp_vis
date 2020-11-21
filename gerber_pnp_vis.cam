@@ -254,7 +254,7 @@
             "outputs": [
                 {
                     "filename_format": "%ASSEMBLYPREFIX/bom",
-                    "list_attribute": false,
+                    "list_attribute": true,
                     "list_type": "values",
                     "name": "Bill of Material",
                     "output_format": "csv",
@@ -276,7 +276,7 @@
             ]
         }
     ],
-    "timestamp": "2020-11-15T12:56:54",
+    "timestamp": "2020-11-21T12:20:33",
     "type": "Fusion 360 Electronics CAM job",
     "units": "imperial",
     "version": "9.2.0"
