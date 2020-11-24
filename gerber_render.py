@@ -112,10 +112,10 @@ def render(BASE_FOLDER):
 
     # Render bottom layers
     ctx.render_layer(outline, settings=RenderSettings(color=theme.COLORS['black'], mirror=True, alpha=0.85))
-    ctx.render_layer(copper, settings=RenderSettings(color=theme.COLORS['hasl copper'], alpha=0.85))
-    ctx.render_layer(mask, settings=RenderSettings(color=theme.COLORS['green soldermask'], invert=True, alpha=0.8))
-    ctx.render_layer(silk, settings=RenderSettings(color=theme.COLORS['white'], alpha=0.85))
-    ctx.render_layer(drill)
+    ctx.render_layer(copper, settings=RenderSettings(color=theme.COLORS['hasl copper'], mirror=True, alpha=0.85))
+    ctx.render_layer(mask, settings=RenderSettings(color=theme.COLORS['green soldermask'], mirror=True, invert=True, alpha=0.8))
+    ctx.render_layer(silk, settings=RenderSettings(color=theme.COLORS['white'], mirror=True, alpha=0.85))
+    ctx.render_layer(drill, settings=RenderSettings(mirror=True))
     ctx.render_layer(outline, settings=RenderSettings(color=theme.COLORS['black'], mirror=True, alpha=0.85))
 
     # Write png file
