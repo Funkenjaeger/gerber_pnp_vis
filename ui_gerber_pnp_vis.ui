@@ -61,6 +61,9 @@
          <height>800</height>
         </size>
        </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
        <column>
         <property name="text">
          <string>Parts</string>
@@ -85,6 +88,9 @@
      <string>File</string>
     </property>
     <addaction name="action_processgerbers"/>
+    <addaction name="separator"/>
+    <addaction name="action_loadbomselectionset"/>
+    <addaction name="action_clearbomselectionset"/>
    </widget>
    <widget class="QMenu" name="menuView_Side">
     <property name="title">
@@ -123,6 +129,22 @@
    </property>
    <property name="text">
     <string>Bottom</string>
+   </property>
+  </action>
+  <action name="action_loadbomselectionset">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Load BOM selection set</string>
+   </property>
+  </action>
+  <action name="action_clearbomselectionset">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Clear BOM selection set</string>
    </property>
   </action>
  </widget>

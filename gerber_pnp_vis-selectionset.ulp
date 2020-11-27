@@ -1,0 +1,61 @@
+#usage	"Exports a list of selected components for use with the gerber_pnp_vis tool\n"
+		"(https://github.com/Funkenjaeger/gerber_pnp_vis)"
+
+string Attr, AttrValue, Filename;
+int Mode=0;
+int partCount = 0;
+
+int Result = dlgDialog("Items")
+{ 
+	dlgHBoxLayout
+	{
+		dlgGroup("Selection Mode") {
+			dlgRadioButton("Use selected group", Mode);
+			dlgRadioButton("Use attribute", Mode);
+		}
+		
+		dlgVBoxLayout
+		{
+			dlgLabel("Attribute");
+			dlgStringEdit(Attr);
+			dlgLabel("Value");
+			dlgStringEdit(AttrValue);
+		}
+	}
+	
+	dlgPushButton("OK")
+	{
+		Filename = dlgFileSave("Select output file", "c:\\temp\\parts.txt", "*.txt");
+		dlgAccept();
+	}
+}; 
+
+output(Filename, "wt") {
+	schematic(S) {
+		S.parts(P) {
+			if(Mode == 0) {
+				P.instances(I) {
+					if (ingroup(I)) {	
+						if (P.device.package) {	
+							if (partCount > 0) { printf(","); }
+							partCount++;
+							printf(P.name); 
+						}
+					}
+				}
+			} else { // Mode 1 (use attribute)
+				if (P.attribute[Attr]) {
+					if (P.attribute[Attr] == AttrValue && P.device.package) {
+						if (partCount > 0) { printf(","); }
+						partCount++;
+						printf(P.name); 
+					}
+				}
+			}
+		}
+	}
+}
+
+string Message;
+sprintf(Message,"Wrote %d selected parts to %s", partCount, Filename);
+dlgMessageBox(Message);

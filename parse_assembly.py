@@ -11,7 +11,7 @@ import configparser
 
 
 def populatebomtree():
-    global bom, assy_top, assy_bot, viewtop, bomcolumns
+    global bom, assy_top, assy_bot, viewtop, bomcolumns, selectionset
     bom = pandas.read_csv(os.path.join(BASE_FOLDER, 'Assembly\\bom.csv'), header=0)
     assy_top = pandas.read_csv(os.path.join(BASE_FOLDER, 'Assembly\\PnP_front.csv'), header=0)
     assy_bot = pandas.read_csv(os.path.join(BASE_FOLDER, 'Assembly\\PnP_back.csv'), header=0)
@@ -28,11 +28,12 @@ def populatebomtree():
         for refdes in selected:
             pnp_row = assy_side[pnp_refdes == refdes]
             if len(pnp_row) > 0:
-                if pnp_count == 0:
-                    twi = QTreeWidgetItem(tw, row.filter(bomcolumns).tolist())
-                parts_thisside = parts_thisside + ',' + refdes if pnp_count > 0 else refdes
-                pnp_count = pnp_count + 1
-                twi.addChild(QTreeWidgetItem(twi, [pnp_row['Name'].values[0]]))
+                if (selectionset == None) or (refdes in selectionset):
+                    if pnp_count == 0:
+                        twi = QTreeWidgetItem(tw, row.filter(bomcolumns).tolist())
+                    parts_thisside = parts_thisside + ',' + refdes if pnp_count > 0 else refdes
+                    pnp_count = pnp_count + 1
+                    twi.addChild(QTreeWidgetItem(twi, [pnp_row['Name'].values[0]]))
         if 0 < pnp_count < len(selected):
             twi.setData(0, Qt.DisplayRole, parts_thisside)
         if pnp_count == 1:
@@ -70,8 +71,9 @@ def highlightparts():
     for sceneItem in scene.items():
         if type(sceneItem) not in [QGraphicsPixmapItem]:
             scene.removeItem(sceneItem)
-    if len(window.treeWidget_bom.selectedItems()) > 0:
-        item = window.treeWidget_bom.selectedItems()[0]
+    for item in window.treeWidget_bom.selectedItems():
+        # if len(window.treeWidget_bom.selectedItems()) > 0:
+        # item = window.treeWidget_bom.selectedItems()[0]
         if item.childCount() == 0:
             highlightpart(item)
         else:
@@ -130,6 +132,7 @@ def loadboard():
 
     window.actionSideTop.setChecked(True)
     window.actionSideBottom.setChecked(False)
+    window.action_loadbomselectionset.setEnabled(True)
     window.statusbar.showMessage('Done processing board', 10000)
 
 
@@ -165,9 +168,29 @@ def setboardside():
         window.statusbar.showMessage('No board loaded', 3000)
 
 
+def readselectionset():
+    global selectionset
+
+    dialog = QFileDialog()
+    selectionset_path = dialog.getOpenFileName(window, "Select BOM selection set file...", '.', '*.txt')
+    if os.path.exists(selectionset_path[0]):
+        selectionset = pandas.read_csv(selectionset_path[0], header=None).squeeze().tolist()
+        window.action_clearbomselectionset.setEnabled(True)
+        populatebomtree()
+        window.statusbar.showMessage('BOM selection set active: ' + selectionset_path[0])
+
+
+def clearselectionset():
+    global selectionset
+    selectionset = None
+    window.action_clearbomselectionset.setEnabled(False)
+    populatebomtree()
+
+
 # if __name__ == "__main__":
 app = QApplication(sys.argv)
 
+selectionset = None
 BASE_FOLDER = '.'
 viewtop = True
 
@@ -186,6 +209,8 @@ window.treeWidget_bom.itemSelectionChanged.connect(highlightparts)
 window.action_processgerbers.triggered.connect(loadboard)
 window.actionSideTop.triggered.connect(setboardtop)
 window.actionSideBottom.triggered.connect(setboardbot)
+window.action_loadbomselectionset.triggered.connect(readselectionset)
+window.action_clearbomselectionset.triggered.connect(clearselectionset)
 
 window.statusbar.showMessage('No board loaded')
 
